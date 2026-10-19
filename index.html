@@ -150,6 +150,7 @@ input.num.bad { border-color: #C0392B; box-shadow: 0 0 0 2px rgb(192 57 43 / .25
     </div>
     <div class="actions" id="actions">
       <button class="btn-primary" id="dl" type="button">تحميل وإرسال</button>
+      <button class="btn-light" id="saveBtn" type="button">حفظ</button>
       <button class="btn-ghost" id="sampleBtn" type="button">تعبئة بيانات تجريبية</button>
       <button class="btn-ghost" id="clearBtn" type="button">أسبوع جديد</button>
     </div>
@@ -162,6 +163,7 @@ input.num.bad { border-color: #C0392B; box-shadow: 0 0 0 2px rgb(192 57 43 / .25
 </div>
 
 <div class="wrap">
+  <div class="notice" id="savedNote" hidden></div>
   <div class="notice example" id="exampleNote" hidden>البيانات المعروضة حاليًا تجريبية فقط. يُرجى الضغط على «أسبوع جديد» قبل إدخال بيانات منطقتك.</div>
   <main id="main"></main>
   <section class="card preview" aria-labelledby="pvTitle">
@@ -585,7 +587,28 @@ function refresh() {
 
 /* ---------- form values ---------- */
 function allInputs() { return document.querySelectorAll("#main input:not([type=file]), #main select, #main textarea"); }
-function save() {} // nothing is kept in the browser
+function save() {} // typing is not stored; only the «حفظ» button stores progress
+const SAVE_KEY = "weekly-report-saved-v3";
+function saveProgress() {
+  const d = {}; allInputs().forEach(e => { if (e.value) d[e.id] = e.value; });
+  try {
+    localStorage.setItem(SAVE_KEY, JSON.stringify({ at: Date.now(), data: d }));
+    const t = new Date();
+    $("#savedNote").textContent = `آخر حفظ: ${t.toLocaleDateString("en-GB")} الساعة ${t.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}. البيانات محفوظة على هذا الجهاز وفي هذا المتصفح فقط، والصورة لا تُحفَظ.`;
+    $("#savedNote").hidden = false;
+    toast("تم حفظ التقدم.");
+  } catch (_) { toast("تعذّر الحفظ في هذا المتصفح."); }
+}
+function restoreProgress() {
+  try {
+    const raw_ = localStorage.getItem(SAVE_KEY); if (!raw_) return;
+    const { at, data } = JSON.parse(raw_); load(data || {});
+    const t = new Date(at);
+    $("#savedNote").textContent = `تم استرجاع البيانات المحفوظة بتاريخ ${t.toLocaleDateString("en-GB")} الساعة ${t.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" })}. إن كانت هناك صورة لقصة النجاح فيُرجى إرفاقها من جديد.`;
+    $("#savedNote").hidden = false;
+  } catch (_) {}
+}
+function clearProgress() { try { localStorage.removeItem(SAVE_KEY); } catch (_) {} $("#savedNote").hidden = true; }
 // remove any draft saved by earlier versions of this form
 try { localStorage.removeItem("weekly-report-draft-v1"); localStorage.removeItem("weekly-report-draft-v2"); } catch (_) {}
 function load(d) { allInputs().forEach(e => { e.value = d[e.id] ?? (e.tagName === "SELECT" ? e.options[0].value : ""); }); }
@@ -1109,6 +1132,7 @@ const SAMPLE = {
 
 /* ---------- wiring ---------- */
 render();
+restoreProgress();
 refresh();
 $("#main").addEventListener("input", e => {
   if (e.target.classList && e.target.classList.contains("num")) enforceNumber(e.target);
@@ -1123,6 +1147,7 @@ $("#main").addEventListener("input", e => {
 });
 $("#main").addEventListener("change", () => { refresh(); save(); schedulePreview(); });
 $("#dl").addEventListener("click", openConfirm);
+$("#saveBtn").addEventListener("click", saveProgress);
 $("#cYes").addEventListener("click", downloadAndSend);
 $("#pw").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); downloadAndSend(); } });
 $("#cReview").addEventListener("click", () => { closeConfirm(); openViewer(0); });
@@ -1162,7 +1187,7 @@ function clearPhoto() {
 $("#st_photo").addEventListener("change", e => setPhoto(e.target.files[0]));
 $("#photoRemove").addEventListener("click", clearPhoto);
 $("#confirmYes").addEventListener("click", () => {
-  load({}); clearPhoto(); $("#exampleNote").hidden = true; refresh(); save(); renderPreview();
+  load({}); clearPhoto(); clearProgress(); $("#exampleNote").hidden = true; refresh(); save(); renderPreview();
   $("#actions").hidden = false; $("#confirmBox").hidden = true; toast("النموذج جاهز لأسبوع جديد");
 });
 renderPreview();
