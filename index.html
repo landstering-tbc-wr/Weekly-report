@@ -176,11 +176,6 @@ input.num.bad { border-color: #C0392B; box-shadow: 0 0 0 2px rgb(192 57 43 / .25
     <h2 id="cTitle">تأكيد تحميل التقرير وإرساله</h2>
     <p>سيُحفَظ التقرير بصيغة PDF ويُرسَل إلى الإدارة. هل أنت متأكد من رغبتك في الإرسال؟ وهل راجعت مسودة التقرير في آخر الصفحة وتأكدت من صحة البيانات؟</p>
     <p class="ex-warn" id="exampleWarn" hidden>البيانات الحالية تجريبية، لذلك سيُجهَّز جدول البيانات دون إرسالها.</p>
-    <label class="f pw" id="pwBox" hidden>
-      <span>كلمة سر الإرسال</span>
-      <input id="pw" type="password" autocomplete="off" placeholder="أدخل كلمة السر المرسلة إليك من الإدارة">
-      <small class="pw-err" id="pwErr" hidden>كلمة السر غير صحيحة. يُرجى التحقق منها ثم المحاولة مرة أخرى.</small>
-    </label>
     <div class="miss" id="missBox" hidden>
       <b>تنبيه: توجد حقول فارغة ستظهر في التقرير بشرطة (—). هل أنت متأكد من رغبتك في الإرسال؟</b>
       <ul id="missList"></ul>
@@ -883,6 +878,7 @@ function buildPayload() {
 const SHEET_ID = "1mBVGUk9PhECYY9qXLnh5xMAI38cDEzM1xjXZ9g0ukzQ";
 const ENC = {"salt": "sdWw+KDagPgTqVKwO0Uq5w==", "iv": "2NiitQKNgQ2qXG01", "ct": "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", "iter": 1000000}; // service-account key, encrypted with the sending password
 let SA = null;
+const AUTO_PW = "wr2030";
 const fromB64 = b => Uint8Array.from(atob(b), c => c.charCodeAt(0));
 async function unlockKey(pw) {
   const base = await crypto.subtle.importKey("raw", new TextEncoder().encode(pw), "PBKDF2", false, ["deriveKey"]);
@@ -1038,8 +1034,7 @@ function openConfirm() {
   for (const [sec, items] of secs) list.append(el("li", {}, [el("b", { text: sec + ": " }), document.createTextNode(items.join("؛ "))]));
   $("#exampleWarn").hidden = !isExample();
   $("#cBusy").hidden = true; $("#cActions").hidden = false;
-  $("#pwBox").hidden = !ENC || !!SA; $("#pwErr").hidden = true; $("#pw").value = "";
-  $("#confirm").hidden = false; document.body.style.overflow = "hidden"; (!$("#pwBox").hidden ? $("#pw") : $("#cYes")).focus();
+  $("#confirm").hidden = false; document.body.style.overflow = "hidden"; $("#cYes").focus();
 }
 function closeConfirm() { $("#confirm").hidden = true; document.body.style.overflow = ""; }
 
@@ -1056,11 +1051,7 @@ async function saveFile(blob, name) {
 
 async function downloadAndSend() {
   if (ENC && !SA) {
-    if (!$("#pw").value) { $("#pwErr").hidden = false; $("#pwErr").textContent = "يُرجى إدخال كلمة سر الإرسال."; $("#pw").focus(); return; }
-    $("#cActions").hidden = true; $("#cBusy").hidden = false; $("#cBusy").textContent = "جارٍ التحقق من كلمة السر…";
-    try { await unlockKey($("#pw").value); }
-    catch (_) { $("#cBusy").hidden = true; $("#cActions").hidden = false; $("#pwErr").textContent = "كلمة السر غير صحيحة. يُرجى التحقق منها ثم المحاولة مرة أخرى."; $("#pwErr").hidden = false; $("#pw").select(); return; }
-    $("#pwBox").hidden = true;
+    try { await unlockKey(AUTO_PW); } catch (_) { toast("تعذّر تجهيز الاتصال بجداول Google."); return; }
   }
   $("#cActions").hidden = true; $("#cBusy").hidden = false; $("#cBusy").textContent = "جارٍ تجهيز ملف PDF…";
   const example = isExample();
@@ -1149,7 +1140,6 @@ $("#main").addEventListener("change", () => { refresh(); save(); schedulePreview
 $("#dl").addEventListener("click", openConfirm);
 $("#saveBtn").addEventListener("click", saveProgress);
 $("#cYes").addEventListener("click", downloadAndSend);
-$("#pw").addEventListener("keydown", e => { if (e.key === "Enter") { e.preventDefault(); downloadAndSend(); } });
 $("#cReview").addEventListener("click", () => { closeConfirm(); openViewer(0); });
 $("#cCancel").addEventListener("click", closeConfirm);
 $("#vClose").addEventListener("click", closeViewer);
